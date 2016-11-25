@@ -1,0 +1,68 @@
+clc
+close all
+clear all
+
+%% Before the propagation
+
+% Model characteristics
+
+Nx = 210;
+Nz = 71;
+
+borde = 30;
+capa  = 9;
+
+dz = 25; 
+dx = dz;
+
+X = dx*(0:Nx-1)/1000;
+Z = dz*(0:Nz-1)/1000;
+
+fid=fopen('Modelo_ori.bin','rb');
+model=fread(fid,'single');
+fclose(fid);
+model = vec2mat(model,Nx);
+
+figure,
+imagesc(X,Z,model)
+ylabel('Depth [km]')
+xlabel('Distance [km]')
+title('Marmousi Model')
+
+% Experiment characteristics
+
+tEnd=3.5; 
+dt=0.004; % 4e-3 - 2e-3
+t = 0:dt:tEnd-dt; 
+Nt = size(t,2);
+frec=3; % 3Hz
+
+fid=fopen('Fuente.bin','rb');
+source=fread(fid,'single');
+fclose(fid);
+
+figure,
+plot(t,source)
+xlabel('Time [s]')
+ylabel('Amplitude')
+title('Seismic Source - 3 Hz')
+
+%%  After the propagation
+
+
+fid=fopen('Frentedeonda.bin','rb');
+wave=fread(fid,'single');
+fclose(fid);
+
+% wave = reshape(wave,[210 71 875]);
+
+for i=1:Nt
+   imagesc(wave(:,:,i)')
+   pause(0.01)
+end
+
+% 
+% 
+% 
+% A = [1 1 1 1 2 2 2 2 3 3 3 3 4 4 4 4 5 5 5 5 6 6 6 6];
+% A = reshape(A,[4 3 2]);A
